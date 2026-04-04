@@ -78,48 +78,6 @@ Built and deployed at **Reallytics.ai** for enterprise clients needing autonomou
 | **Messaging** | Slack SDK, SendGrid |
 | **Deployment** | Docker, AWS ECS |
 
-## Project Structure
-
-```
-agentic-ai-workflows/
-├── agents/
-│   ├── base_agent.py
-│   ├── seo_agent.py
-│   ├── content_agent.py
-│   ├── data_pipeline_agent.py
-│   ├── research_agent.py
-│   └── integration_agent.py
-├── tools/
-│   ├── web_search.py
-│   ├── database_tool.py
-│   ├── api_caller.py
-│   ├── content_generator.py
-│   ├── file_manager.py
-│   └── messaging.py
-├── orchestration/
-│   ├── planner.py
-│   ├── executor.py
-│   ├── evaluator.py
-│   └── workflow_engine.py
-├── memory/
-│   ├── conversation_memory.py
-│   ├── task_memory.py
-│   └── vector_memory.py
-├── api/
-│   ├── main.py
-│   ├── routes/
-│   └── websocket_handler.py
-├── config/
-│   ├── agent_config.yaml
-│   └── tool_config.yaml
-├── infrastructure/
-│   ├── Dockerfile
-│   └── docker-compose.yml
-├── tests/
-├── requirements.txt
-└── README.md
-```
-
 ## Example Workflows
 
 ### SEO Content Pipeline
@@ -144,26 +102,10 @@ Trigger: New data arrives in S3
   └─▶ Integration Agent: Send report via Slack
 ```
 
-## Quick Start
+---
 
-```bash
-git clone https://github.com/rehan243/Agentic-AI-Workflows.git
-cd Agentic-AI-Workflows
+> **Source Code**: The production source code for this project is maintained in a private repository due to proprietary and client confidentiality requirements. This repository documents the architecture, design decisions, and technical approach. For code-level discussions or collaboration inquiries, feel free to reach out.
 
-pip install -r requirements.txt
-
-# Configure API keys
-cp .env.example .env
-
-# Start services
-docker-compose up -d
-
-# Run the API server
-uvicorn api.main:app --host 0.0.0.0 --port 8000
-
-# Execute a workflow
-python orchestration/workflow_engine.py --workflow seo_pipeline --target "enterprise AI"
-```
 
 ## Author
 
@@ -174,4 +116,3 @@ python orchestration/workflow_engine.py --workflow seo_pipeline --target "enterp
 - [Email](mailto:rehanmalil99@gmail.com)
 
 ---
-
