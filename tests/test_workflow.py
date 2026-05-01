@@ -1,31 +1,33 @@
 import pytest
-from workflows import Workflow, ExecutionError
+from workflows import Workflow, Task
 
-# test case for successful workflow execution
-def test_workflow_execution():
-    workflow = Workflow()
-    result = workflow.run("example_task")
-    assert result == "expected_output"
-
-# test case for handling an error in the workflow
-def test_workflow_execution_error():
-    workflow = Workflow()
-    with pytest.raises(ExecutionError):
-        workflow.run("failing_task")
-
-# test case for checking task registration
-def test_task_registration():
-    workflow = Workflow()
-    workflow.register_task("new_task", lambda: "new_output")
-    assert "new_task" in workflow.tasks
-
-# test case for verifying task execution order
-def test_task_execution_order():
-    workflow = Workflow()
-    workflow.register_task("first_task", lambda: "first")
-    workflow.register_task("second_task", lambda: "second")
+# testing basic workflow behavior
+def test_workflow_initialization():
+    # create a simple workflow with a couple of tasks
+    task1 = Task(name='task1', action=lambda: 'result1')
+    task2 = Task(name='task2', action=lambda: 'result2')
+    workflow = Workflow(tasks=[task1, task2])
     
-    execution_order = workflow.run_all(["first_task", "second_task"])
-    assert execution_order == ["first", "second"]
+    # check if the workflow has the right number of tasks
+    assert len(workflow.tasks) == 2
+    assert workflow.tasks[0].name == 'task1'
+    assert workflow.tasks[1].name == 'task2'
 
-# TODO: add more tests for edge cases and complex workflows
+def test_workflow_execution():
+    task1 = Task(name='task1', action=lambda: 'result1')
+    task2 = Task(name='task2', action=lambda: 'result2')
+    workflow = Workflow(tasks=[task1, task2])
+    
+    results = workflow.execute()
+    
+    # check if the results are as expected
+    assert results == ['result1', 'result2']
+
+def test_workflow_empty():
+    workflow = Workflow(tasks=[])
+    
+    # check if executing an empty workflow returns an empty result
+    results = workflow.execute()
+    assert results == []
+
+# TODO: add more tests for error handling and edge cases
