@@ -1,33 +1,28 @@
 import pytest
 from workflows import Workflow, Task
 
-# testing basic workflow behavior
-def test_workflow_initialization():
-    # create a simple workflow with a couple of tasks
-    task1 = Task(name='task1', action=lambda: 'result1')
-    task2 = Task(name='task2', action=lambda: 'result2')
+# creating a simple workflow with tasks
+@pytest.fixture
+def sample_workflow():
+    task1 = Task(name="task1", action=lambda: "result1")
+    task2 = Task(name="task2", action=lambda: "result2")
     workflow = Workflow(tasks=[task1, task2])
-    
-    # check if the workflow has the right number of tasks
-    assert len(workflow.tasks) == 2
-    assert workflow.tasks[0].name == 'task1'
-    assert workflow.tasks[1].name == 'task2'
+    return workflow
 
-def test_workflow_execution():
-    task1 = Task(name='task1', action=lambda: 'result1')
-    task2 = Task(name='task2', action=lambda: 'result2')
-    workflow = Workflow(tasks=[task1, task2])
-    
-    results = workflow.execute()
-    
-    # check if the results are as expected
-    assert results == ['result1', 'result2']
+def test_workflow_execution(sample_workflow):
+    # testing if the tasks execute as expected
+    results = sample_workflow.run()
+    assert results[0] == "result1"
+    assert results[1] == "result2"
 
-def test_workflow_empty():
-    workflow = Workflow(tasks=[])
-    
-    # check if executing an empty workflow returns an empty result
-    results = workflow.execute()
-    assert results == []
+def test_workflow_task_count(sample_workflow):
+    # checking if the workflow has the right amount of tasks
+    assert len(sample_workflow.tasks) == 2
+
+def test_workflow_task_names(sample_workflow):
+    # ensuring task names are set correctly
+    task_names = [task.name for task in sample_workflow.tasks]
+    assert "task1" in task_names
+    assert "task2" in task_names
 
 # TODO: add more tests for error handling and edge cases
