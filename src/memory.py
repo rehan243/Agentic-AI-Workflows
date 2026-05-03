@@ -1,6 +1,6 @@
 """
-Conversation memory: cheap sliding window + optional long-term vector store.
-Summarization kicks in when token count crosses a threshold — same pattern we use in prod.
+conversation memory: cheap sliding window + optional long-term vector store.
+summarization kicks in when token count crosses a threshold — same pattern we use in prod.
 """
 from __future__ import annotations
 
@@ -79,14 +79,16 @@ class ConversationMemory:
         if self._vector and text_for_vector.strip():
             meta = dict(metadata or {})
             meta["turn"] = self._turn_counter
-            self._vector.add([text_for_vector], metadatas=[meta])
+            try:
+                self._vector.add([text_for_vector], metadatas=[meta])
+            except Exception as e:
+                logger.warning("failed to add to vector store: %s", e)
 
     def _maybe_summarize(self) -> None:
         texts = self._window_texts()
         total = self._count_tokens(texts)
         if total < self._cfg.summarize_trigger_tokens:
             return
-        # Collapse oldest half into summary; keeps latency predictable.
         half = max(1, len(self._messages) // 2)
         old = self._messages[:half]
         self._messages = self._messages[half:]
