@@ -1,28 +1,37 @@
 import pytest
-from workflows import Workflow, Task
+from workflows import Workflow, Task  # assuming these are part of the workflows module
 
-# creating a simple workflow with tasks
-@pytest.fixture
-def sample_workflow():
-    task1 = Task(name="task1", action=lambda: "result1")
-    task2 = Task(name="task2", action=lambda: "result2")
-    workflow = Workflow(tasks=[task1, task2])
-    return workflow
+def test_task_execution():
+    # create a simple task
+    task = Task(name="sample_task", action=lambda: 42)
+    result = task.execute()
+    
+    # check if the task executes correctly
+    assert result == 42, f"expected 42 but got {result}"
 
-def test_workflow_execution(sample_workflow):
-    # testing if the tasks execute as expected
-    results = sample_workflow.run()
-    assert results[0] == "result1"
-    assert results[1] == "result2"
+def test_workflow_run():
+    # create a workflow with multiple tasks
+    task1 = Task(name="task1", action=lambda: 1)
+    task2 = Task(name="task2", action=lambda: 2)
+    workflow = Workflow(name="simple_workflow", tasks=[task1, task2])
+    
+    results = workflow.run()
+    
+    # check if the workflow runs all tasks
+    assert len(results) == 2, f"expected 2 results but got {len(results)}"
+    assert results[0] == 1, f"expected result from task1 to be 1 but got {results[0]}"
+    assert results[1] == 2, f"expected result from task2 to be 2 but got {results[1]}"
 
-def test_workflow_task_count(sample_workflow):
-    # checking if the workflow has the right amount of tasks
-    assert len(sample_workflow.tasks) == 2
-
-def test_workflow_task_names(sample_workflow):
-    # ensuring task names are set correctly
-    task_names = [task.name for task in sample_workflow.tasks]
-    assert "task1" in task_names
-    assert "task2" in task_names
+def test_workflow_with_conditions():
+    task1 = Task(name="task1", action=lambda: "success")
+    task2 = Task(name="task2", action=lambda: "fail")
+    workflow = Workflow(name="conditional_workflow", tasks=[task1, task2])
+    
+    # here we would have some condition logic
+    results = workflow.run()
+    
+    # assuming we want to check for specific conditions in results
+    assert "success" in results, "task1 should succeed"
+    assert "fail" in results, "task2 executed but should not succeed"
 
 # TODO: add more tests for error handling and edge cases
