@@ -1,37 +1,37 @@
 import pytest
-from workflows import Workflow, Task  # assuming these are part of the workflows module
+from workflows import Workflow
 
-def test_task_execution():
-    # create a simple task
-    task = Task(name="sample_task", action=lambda: 42)
-    result = task.execute()
-    
-    # check if the task executes correctly
-    assert result == 42, f"expected 42 but got {result}"
+# testing the basic functionality of the Workflow class
+def test_workflow_initialization():
+    # ensure a workflow initializes with the correct attributes
+    workflow = Workflow(name="test_workflow", steps=["step1", "step2"])
+    assert workflow.name == "test_workflow"
+    assert workflow.steps == ["step1", "step2"]
 
-def test_workflow_run():
-    # create a workflow with multiple tasks
-    task1 = Task(name="task1", action=lambda: 1)
-    task2 = Task(name="task2", action=lambda: 2)
-    workflow = Workflow(name="simple_workflow", tasks=[task1, task2])
+def test_workflow_execute():
+    # testing the execution of the workflow
+    workflow = Workflow(name="test_workflow", steps=["step1", "step2"])
     
-    results = workflow.run()
+    # assuming there's a method to execute the workflow
+    result = workflow.execute()
     
-    # check if the workflow runs all tasks
-    assert len(results) == 2, f"expected 2 results but got {len(results)}"
-    assert results[0] == 1, f"expected result from task1 to be 1 but got {results[0]}"
-    assert results[1] == 2, f"expected result from task2 to be 2 but got {results[1]}"
+    # check if the execution returns expected output
+    assert result == "execution successful"
 
-def test_workflow_with_conditions():
-    task1 = Task(name="task1", action=lambda: "success")
-    task2 = Task(name="task2", action=lambda: "fail")
-    workflow = Workflow(name="conditional_workflow", tasks=[task1, task2])
+def test_workflow_add_step():
+    # testing adding a step to the workflow
+    workflow = Workflow(name="test_workflow", steps=["step1"])
+    workflow.add_step("step2")
     
-    # here we would have some condition logic
-    results = workflow.run()
-    
-    # assuming we want to check for specific conditions in results
-    assert "success" in results, "task1 should succeed"
-    assert "fail" in results, "task2 executed but should not succeed"
+    assert "step2" in workflow.steps
+    assert len(workflow.steps) == 2
 
-# TODO: add more tests for error handling and edge cases
+def test_workflow_remove_step():
+    # testing removing a step from the workflow
+    workflow = Workflow(name="test_workflow", steps=["step1", "step2"])
+    workflow.remove_step("step1")
+    
+    assert "step1" not in workflow.steps
+    assert len(workflow.steps) == 1
+
+# TODO: add more tests for edge cases and error handling
