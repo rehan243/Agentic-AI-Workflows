@@ -1,35 +1,34 @@
 import pytest
-from workflows import Workflow, Task  # assuming these are the main modules
-
-def test_workflow_initialization():
-    # test if workflow initializes correctly
-    workflow = Workflow(name="test_workflow")
-    assert workflow.name == "test_workflow"
-    assert workflow.tasks == []
-
-def test_adding_task():
-    # test if a task can be added to the workflow
-    workflow = Workflow(name="test_workflow")
-    task = Task(name="test_task", action=lambda: "done")
-    workflow.add_task(task)
-    
-    assert len(workflow.tasks) == 1
-    assert workflow.tasks[0].name == "test_task"
+from workflows import Workflow, Task
 
 def test_workflow_execution():
-    # test if workflow executes tasks correctly
-    workflow = Workflow(name="test_workflow")
-    task1 = Task(name="task1", action=lambda: "result1")
-    task2 = Task(name="task2", action=lambda: "result2")
-    
-    workflow.add_task(task1)
-    workflow.add_task(task2)
-    
-    results = workflow.execute()  # assuming this runs all tasks in order
-    assert results == ["result1", "result2"]
+    # create a simple workflow with two tasks
+    task1 = Task(name='task1', action=lambda: 1)
+    task2 = Task(name='task2', action=lambda: 2)
+    workflow = Workflow(tasks=[task1, task2])
 
-def test_empty_workflow_execution():
-    # test if executing an empty workflow returns an empty result
-    workflow = Workflow(name="empty_workflow")
-    results = workflow.execute()
-    assert results == []  # should return empty list if no tasks
+    # execute the workflow
+    results = workflow.run()
+
+    # check if the results are as expected
+    assert results == [1, 2], f"expected [1, 2], got {results}"
+
+def test_workflow_empty():
+    # test a workflow with no tasks
+    workflow = Workflow(tasks=[])
+
+    # executing should return an empty list
+    results = workflow.run()
+    
+    assert results == [], f"expected [], got {results}"
+
+def test_single_task_workflow():
+    # test a workflow with a single task
+    task = Task(name='single_task', action=lambda: 'done')
+    workflow = Workflow(tasks=[task])
+
+    results = workflow.run()
+    
+    assert results == ['done'], f"expected ['done'], got {results}"
+
+# TODO: add more tests for error handling and edge cases
