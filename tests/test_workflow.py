@@ -1,34 +1,32 @@
 import pytest
-from workflows import Workflow, Task
+from workflows import Workflow, Step
 
-def test_workflow_execution():
-    # create a simple workflow with two tasks
-    task1 = Task(name='task1', action=lambda: 1)
-    task2 = Task(name='task2', action=lambda: 2)
-    workflow = Workflow(tasks=[task1, task2])
+# this test checks if a workflow can be created successfully
+def test_workflow_creation():
+    workflow = Workflow(name="test_workflow")
+    assert workflow.name == "test_workflow"
+    assert workflow.steps == []
 
-    # execute the workflow
-    results = workflow.run()
-
-    # check if the results are as expected
-    assert results == [1, 2], f"expected [1, 2], got {results}"
-
-def test_workflow_empty():
-    # test a workflow with no tasks
-    workflow = Workflow(tasks=[])
-
-    # executing should return an empty list
-    results = workflow.run()
+# this test checks if steps can be added to the workflow
+def test_add_step():
+    workflow = Workflow(name="test_workflow")
+    step = Step(name="step_1", action="do_something")
+    workflow.add_step(step)
     
-    assert results == [], f"expected [], got {results}"
+    assert len(workflow.steps) == 1
+    assert workflow.steps[0].name == "step_1"
 
-def test_single_task_workflow():
-    # test a workflow with a single task
-    task = Task(name='single_task', action=lambda: 'done')
-    workflow = Workflow(tasks=[task])
-
-    results = workflow.run()
+# this test checks if the workflow can execute its steps
+def test_execute_steps():
+    workflow = Workflow(name="test_workflow")
+    step_1 = Step(name="step_1", action="do_something")
+    step_2 = Step(name="step_2", action="do_something_else")
     
-    assert results == ['done'], f"expected ['done'], got {results}"
+    workflow.add_step(step_1)
+    workflow.add_step(step_2)
+    
+    results = workflow.execute()
+    
+    assert results == ["step_1 executed", "step_2 executed"]  # assuming this is expected output
 
 # TODO: add more tests for error handling and edge cases
