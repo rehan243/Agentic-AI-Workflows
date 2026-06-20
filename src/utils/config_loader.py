@@ -5,36 +5,32 @@ class ConfigLoader:
     def __init__(self, config_file: str):
         self.config_file = config_file
         self.config_data = {}
+        self.load_config()
 
-    def load(self) -> dict:
-        # check if the file exists
-        if not os.path.isfile(self.config_file):
-            raise FileNotFoundError(f"Config file {self.config_file} not found")
+    def load_config(self):
+        if not os.path.exists(self.config_file):
+            raise FileNotFoundError(f"Config file not found: {self.config_file}")
         
-        # load the json config file
-        with open(self.config_file, 'r') as file:
-            self.config_data = json.load(file)
-        
-        return self.config_data
+        with open(self.config_file, 'r') as f:
+            try:
+                self.config_data = json.load(f)
+            except json.JSONDecodeError as e:
+                raise ValueError(f"Error parsing JSON: {e}")
 
     def get(self, key: str, default=None):
-        # get a specific key from the config
         return self.config_data.get(key, default)
 
     def set(self, key: str, value):
-        # set a value in the config and save it
         self.config_data[key] = value
-        self.save()
+        self.save_config()
 
-    def save(self):
-        # save the current config data back to the file
-        with open(self.config_file, 'w') as file:
-            json.dump(self.config_data, file, indent=4)
-
-# TODO: add validation for config keys and types if needed
+    def save_config(self):
+        with open(self.config_file, 'w') as f:
+            json.dump(self.config_data, f, indent=4)
 
 # example usage
 if __name__ == "__main__":
     config_loader = ConfigLoader('config.json')
-    config = config_loader.load()
-    print(f"Loaded config: {config}")
+    print(config_loader.get('some_key', 'default_value'))  # just testing
+
+    # TODO: implement better error handling and logging here
