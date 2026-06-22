@@ -1,37 +1,41 @@
 #!/bin/bash
 
-# this script sets up the development environment for the project
+# this script sets up the development environment
+# make sure you have all dependencies installed
 
-# check if docker is running
-if ! systemctl is-active --quiet docker; then
-  echo "docker is not running. please start docker and try again"
-  exit 1
-fi
+# define some variables for easy reference
+REPO_NAME="agentic-ai-workflows"
+VENV_DIR=".venv"
 
 # create a virtual environment if it doesn't exist
-if [ ! -d "venv" ]; then
-  echo "creating a virtual environment"
-  python3 -m venv venv
+if [ ! -d "$VENV_DIR" ]; then
+    echo "creating virtual environment..."
+    python3 -m venv $VENV_DIR
 fi
 
 # activate the virtual environment
-source venv/bin/activate
+source $VENV_DIR/bin/activate
 
 # install dependencies
-echo "installing dependencies"
+echo "installing dependencies..."
 pip install -r requirements.txt
 
 # run linting
-echo "running linting"
-flake8 . || { echo "linting failed"; exit 1; }
+echo "running flake8 for linting..."
+flake8 src/
 
 # run tests
-echo "running tests"
-pytest tests/ || { echo "tests failed"; exit 1; }
+echo "running tests with pytest..."
+pytest tests/
 
 # build docker image
-echo "building docker image"
-docker build -t agentic-ai-workflows . || { echo "docker build failed"; exit 1; }
+echo "building docker image..."
+docker build -t $REPO_NAME .
 
-# everything is good to go
-echo "development environment is set up successfully"
+# cleanup
+echo "cleaning up..."
+deactivate
+
+# TODO: maybe add a command to run the app locally
+
+echo "development setup complete"
