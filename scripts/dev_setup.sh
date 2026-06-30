@@ -1,41 +1,38 @@
 #!/bin/bash
 
-# this script sets up the development environment
-# make sure you have all dependencies installed
+# this script sets up the development environment and runs tests
 
-# define some variables for easy reference
-REPO_NAME="agentic-ai-workflows"
-VENV_DIR=".venv"
-
-# create a virtual environment if it doesn't exist
-if [ ! -d "$VENV_DIR" ]; then
-    echo "creating virtual environment..."
-    python3 -m venv $VENV_DIR
+# check if docker is running
+if ! docker info > /dev/null 2>&1; then
+  echo "docker is not running. please start docker and try again"
+  exit 1
 fi
 
-# activate the virtual environment
-source $VENV_DIR/bin/activate
+# pull the latest images
+echo "pulling latest docker images"
+docker-compose pull
 
-# install dependencies
-echo "installing dependencies..."
-pip install -r requirements.txt
+# build the project
+echo "building the project"
+docker-compose build
 
 # run linting
-echo "running flake8 for linting..."
-flake8 src/
+echo "running linters"
+docker-compose run --rm app flake8 src/
 
 # run tests
-echo "running tests with pytest..."
-pytest tests/
+echo "running tests"
+docker-compose run --rm app pytest tests/
 
-# build docker image
-echo "building docker image..."
-docker build -t $REPO_NAME .
+# check for any remaining containers
+if [ "$(docker ps -q)" ]; then
+  echo "some containers are still running. please check them"
+else
+  echo "all containers stopped successfully"
+fi
 
-# cleanup
-echo "cleaning up..."
-deactivate
+# cleanup unused docker resources
+echo "cleaning up unused docker resources"
+docker system prune -f
 
-# TODO: maybe add a command to run the app locally
-
-echo "development setup complete"
+echo "development setup and tests completed"
