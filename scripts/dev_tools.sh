@@ -1,32 +1,40 @@
 #!/bin/bash
 
-# this script is for running linting and tests
-# make sure you have all the dependencies installed first
+# this script sets up the development environment for linting and testing
 
-set -e # exit immediately if a command fails
+set -e  # exit immediately if a command exits with a non-zero status
 
-# function to run linting
-run_lint() {
-    echo "running linters..."
-    flake8 src/ tests/ # checking python code style
-    black --check src/ tests/ # checking code formatting
+# check if required tools are installed
+function check_tools() {
+    for tool in pylint pytest; do
+        if ! command -v $tool &> /dev/null; then
+            echo "$tool could not be found, please install it"
+            exit 1
+        fi
+    done
 }
 
-# function to run tests
-run_tests() {
+# lint the python files
+function lint_code() {
+    echo "running linter..."
+    pylint src/  # linter for source code
+}
+
+# run the tests
+function run_tests() {
     echo "running tests..."
-    pytest tests/ # running tests with pytest
+    pytest tests/  # run tests in the tests directory
 }
 
-# main function to control the script flow
-main() {
-    echo "starting dev tools script"
-    run_lint
+# main function to orchestrate the tasks
+function main() {
+    check_tools
+    lint_code
     run_tests
-    echo "all checks passed"
+    echo "all checks passed!"
 }
 
-# execute the main function
+# run the main function
 main
 
-# TODO: consider adding options for docker and local run in the future
+# TODO: add docker support for running tests in a container if needed
