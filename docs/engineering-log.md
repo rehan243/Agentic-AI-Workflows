@@ -10,3 +10,7 @@ Refined the tool routing logic to prioritize low-latency APIs first, which impro
 ### 2026-07-08
 
 experimented with dynamic tool prioritization to improve multi-step planning, but found that overly aggressive routing caused some steps to timeout when the chosen tools were slow or unresponsive. balancing the routing logic to include fallback options helped mitigate this, but added complexity to the orchestration layer.
+
+### 2026-07-13
+
+Added dynamic tool routing to the agent orchestration layer, enabling context-aware selection of submodules during multi-step planning. Noticed that overly aggressive pruning of candidate tools can reduce computational overhead but risks missing necessary actions in complex workflows, need to tune pruning thresholds carefully to balance latency and completeness.
