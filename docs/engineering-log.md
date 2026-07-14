@@ -14,3 +14,7 @@ experimented with dynamic tool prioritization to improve multi-step planning, bu
 ### 2026-07-13
 
 Added dynamic tool routing to the agent orchestration layer, enabling context-aware selection of submodules during multi-step planning. Noticed that overly aggressive pruning of candidate tools can reduce computational overhead but risks missing necessary actions in complex workflows, need to tune pruning thresholds carefully to balance latency and completeness.
+
+### 2026-07-14
+
+Tested chaining multiple agents with different toolsets for stepwise task execution; found that routing overhead grows non-linearly as the agent count increases, causing noticeable latency past 4 agents. To mitigate, I prioritized lazy-loading tool inventories and caching intermediate results, which helped keep response times manageable without complex batching.
