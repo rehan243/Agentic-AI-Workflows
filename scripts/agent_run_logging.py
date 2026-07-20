@@ -21,7 +21,10 @@ class RunPaths:
 
     def log_path(self, session: str) -> Path:
         d = self.root / "logs" / session
-        d.mkdir(parents=True, exist_ok=True)
+        try:
+            d.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            print(f"error creating directory {d}: {e}")
         return d / "events.jsonl"
 
 
@@ -32,8 +35,11 @@ def append_event(paths: RunPaths, session: str, event: Mapping[str, Any]) -> Non
         **dict(event),
     }
     p = paths.log_path(session)
-    with p.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(line, ensure_ascii=False) + "\n")
+    try:
+        with p.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(line, ensure_ascii=False) + "\n")
+    except Exception as e:
+        print(f"error writing to {p}: {e}")
 
 
 def read_bool(name: str, default: bool = False) -> bool:
