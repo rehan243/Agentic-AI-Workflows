@@ -18,3 +18,7 @@ Added dynamic tool routing to the agent orchestration layer, enabling context-aw
 ### 2026-07-14
 
 Tested chaining multiple agents with different toolsets for stepwise task execution; found that routing overhead grows non-linearly as the agent count increases, causing noticeable latency past 4 agents. To mitigate, I prioritized lazy-loading tool inventories and caching intermediate results, which helped keep response times manageable without complex batching.
+
+### 2026-07-25
+
+I've been working on the agent orchestration module, focusing on tool routing and multi-step planning. I've noticed that the overhead of context switching between tools can significantly impact performance. For example, switching between a text-based tool and a voice-based tool adds around 300ms of latency, which accumulates quickly in complex workflows. I'll need to optimize the context management to mitigate this.
