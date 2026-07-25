@@ -1,14 +1,14 @@
-"""Multi-Agent Orchestrator — coordinates 8 specialized AI agents.
+"""multi-agent orchestrator — coordinates 8 specialized ai agents.
 
-Implements planning loops, tool-use routing, and guardrails for
-production-grade agentic AI workflows using LangChain and OpenAI.
+implements planning loops, tool-use routing, and guardrails for
+production-grade agentic ai workflows using langchain and openai.
 """
 
 import asyncio
 import logging
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any
+from typing import Any, Optional, Tuple, Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -28,13 +28,13 @@ class AgentRole(Enum):
 class AgentMessage:
     role: AgentRole
     content: str
-    metadata: dict = field(default_factory=dict)
-    tool_calls: list[dict] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    tool_calls: List[Dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
 class WorkflowState:
-    messages: list[AgentMessage] = field(default_factory=list)
+    messages: List[AgentMessage] = field(default_factory=list)
     current_agent: AgentRole = AgentRole.PLANNER
     iteration: int = 0
     max_iterations: int = 10
@@ -42,16 +42,16 @@ class WorkflowState:
 
 
 class AgentOrchestrator:
-    """Orchestrates multi-agent workflows with planning and guardrails."""
+    """orchestrates multi-agent workflows with planning and guardrails."""
 
-    def __init__(self, llm_client, tools: dict[str, Any] | None = None):
+    def __init__(self, llm_client, tools: Optional[Dict[str, Any]] = None):
         self.llm = llm_client
         self.tools = tools or {}
-        self.agents: dict[AgentRole, Any] = {}
+        self.agents: Dict[AgentRole, Any] = {}
 
     def register_agent(self, role: AgentRole, agent):
         self.agents[role] = agent
-        logger.info("Registered agent: %s", role.value)
+        logger.info("registered agent: %s", role.value)
 
     async def run_workflow(self, task: str) -> WorkflowState:
         state = WorkflowState()
@@ -63,13 +63,17 @@ class AgentOrchestrator:
         while not state.completed and state.iteration < state.max_iterations:
             agent = self.agents.get(state.current_agent)
             if not agent:
-                logger.error("No agent for role: %s", state.current_agent)
+                logger.error("no agent for role: %s", state.current_agent)
                 break
 
-            response = await agent.process(state)
-            state.messages.append(response)
-            state.current_agent = self._route_next(state, response)
-            state.iteration += 1
+            try:
+                response = await agent.process(state)
+                state.messages.append(response)
+                state.current_agent = self._route_next(state, response)
+                state.iteration += 1
+            except Exception as e:
+                logger.error(f"error processing with agent {state.current_agent}: {e}")
+                break
 
         return state
 
@@ -81,12 +85,12 @@ class AgentOrchestrator:
 
 
 class GuardrailChecker:
-    """Safety and quality guardrails for agent outputs."""
+    """safety and quality guardrails for agent outputs."""
 
     BLOCKED_PATTERNS = ["DROP TABLE", "rm -rf", "sudo", "exec("]
 
-    def check(self, content: str) -> tuple[bool, str]:
+    def check(self, content: str) -> Tuple[bool, str]:
         for pattern in self.BLOCKED_PATTERNS:
             if pattern.lower() in content.lower():
-                return False, f"Blocked pattern detected: {pattern}"
+                return False, f"blocked pattern detected: {pattern}"
         return True, "OK"
