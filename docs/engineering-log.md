@@ -22,3 +22,7 @@ Tested chaining multiple agents with different toolsets for stepwise task execut
 ### 2026-07-25
 
 I've been working on the agent orchestration module, focusing on tool routing and multi-step planning. I've noticed that the overhead of context switching between tools can significantly impact performance. For example, switching between a text-based tool and a voice-based tool adds around 300ms of latency, which accumulates quickly in complex workflows. I'll need to optimize the context management to mitigate this.
+
+### 2026-07-26
+
+Added dynamic tool routing based on confidence thresholds in the planner to reduce unnecessary API calls during multi-step reasoning. Noticed that setting the threshold too low causes excessive fallback invocations, increasing latency, while too high leads to missing useful tool suggestions. Balancing this threshold is critical for efficient orchestration without sacrificing response quality.
