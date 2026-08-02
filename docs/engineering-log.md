@@ -26,3 +26,7 @@ I've been working on the agent orchestration module, focusing on tool routing an
 ### 2026-07-26
 
 Added dynamic tool routing based on confidence thresholds in the planner to reduce unnecessary API calls during multi-step reasoning. Noticed that setting the threshold too low causes excessive fallback invocations, increasing latency, while too high leads to missing useful tool suggestions. Balancing this threshold is critical for efficient orchestration without sacrificing response quality.
+
+### 2026-08-02
+
+Reviewed agent orchestration, tool routing, and multi-step planning today. Reinforced that measuring the change end-to-end beats reasoning about it in isolation — the numbers rarely match the intuition.
