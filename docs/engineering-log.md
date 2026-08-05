@@ -30,3 +30,7 @@ Added dynamic tool routing based on confidence thresholds in the planner to redu
 ### 2026-08-02
 
 Reviewed agent orchestration, tool routing, and multi-step planning today. Reinforced that measuring the change end-to-end beats reasoning about it in isolation — the numbers rarely match the intuition.
+
+### 2026-08-05
+
+Reviewed agent orchestration, tool routing, and multi-step planning today. Reinforced that measuring the change end-to-end beats reasoning about it in isolation — the numbers rarely match the intuition.
