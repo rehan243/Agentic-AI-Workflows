@@ -34,3 +34,7 @@ Reviewed agent orchestration, tool routing, and multi-step planning today. Reinf
 ### 2026-08-05
 
 Reviewed agent orchestration, tool routing, and multi-step planning today. Reinforced that measuring the change end-to-end beats reasoning about it in isolation — the numbers rarely match the intuition.
+
+### 2026-08-23
+
+Reviewed agent orchestration, tool routing, and multi-step planning today. Reinforced that measuring the change end-to-end beats reasoning about it in isolation — the numbers rarely match the intuition.
